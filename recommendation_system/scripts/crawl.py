@@ -60,7 +60,7 @@ class Crawler:
                 print(f"Error processing {current_url}: {e}")
 
             # Save data periodically
-            scraper.df.to_csv("data/cocktail_data.csv", index=False)
+            scraper.df.to_csv("recommendation_system/data/cocktail_data.csv", index=False)
 
     def crawl(self, scraper: "CocktailScraper") -> None:
         try:
@@ -76,18 +76,18 @@ class Crawler:
                     self.nxt_queue, self.prev_queue = self.prev_queue, self.nxt_queue
 
             # Final save
-            scraper.df.to_csv("data/cocktail_data.csv", index=False)
-            print("Data saved to data/cocktail_data.csv")
+            scraper.df.to_csv("recommendation_system/data/cocktail_data.csv", index=False)
+            print("Data saved to recommendation_system/data/cocktail_data.csv")
 
 
         except KeyboardInterrupt:
             print("Process interrupted. Saving data...")
-            scraper.df.to_csv("data/cocktail_data.csv", index=False)
-            print("Data saved to data/cocktail_data.csv")
+            scraper.df.to_csv("recommendation_system/data/cocktail_data.csv", index=False)
+            print("Data saved to recommendation_system/data/cocktail_data.csv")
         except Exception as e:
             print(f"An error occurred: {e}")
-            scraper.df.to_csv("data/cocktail_data.csv", index=False)
-            print("Data saved to data/cocktail_data.csv")
+            scraper.df.to_csv("recommendation_system/data/cocktail_data.csv", index=False)
+            print("Data saved to recommendation_system/data/cocktail_data.csv")
 
 
 if __name__ == "__main__":
