@@ -25,8 +25,8 @@ class Crawler:
         self.nxt_queue = deque([start_url])
         self.prev_queue = deque()
         now = datetime.now().strftime("%m%d%Y_%H%M")
-        self.data_path = f"recommendation_system/data/{now}/crlmt_{self.crawl_limit}/"
-        self.model_path = f"recommendation_system/model/{now}/crlmt_{self.crawl_limit}/"
+        self.data_path = f"data/{now}/crlmt_{self.crawl_limit}"
+        self.model_path = f"model/{now}/crlmt_{self.crawl_limit}"
         Path(self.data_path).mkdir(parents=True, exist_ok=True)
         Path(self.model_path).mkdir(parents=True, exist_ok=True)
 

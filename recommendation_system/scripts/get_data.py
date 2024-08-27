@@ -21,5 +21,8 @@ if __name__ == "__main__":
     )
     tfidf_matrix = vectorizer.fit_transform(df.whole_text)
 
-    with open(f"{crawler.model_path}vectorizer.pk", "wb") as f:
+    with open(f"{crawler.model_path}/vectorizer.pk", "wb") as f:
         pickle.dump(vectorizer, f)
+
+    with open(f"{crawler.model_path}/tfidf_matrix.pk", "wb") as f:
+        pickle.dump(tfidf_matrix, f)
