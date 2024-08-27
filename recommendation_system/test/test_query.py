@@ -4,7 +4,7 @@ from app.main import app
 client = TestClient(app)
 
 def test_query_yields_10_results():
-    response = client.get("/query?query=a fun love story")
+    response = client.get("/query?query=A dark drink for the halloween")
     json_response = response.json()
     
     assert response.status_code == 200
@@ -12,7 +12,7 @@ def test_query_yields_10_results():
     assert json_response["message"] == "OK"
 
 def test_query_yields_few_results():
-    response = client.get("/query?query=zombie apocalypse")
+    response = client.get("/query?query=I'd like a drink with that reminds me some smoky notes due the heavy weather of today")
     json_response = response.json()
     
     assert response.status_code == 200
@@ -20,7 +20,7 @@ def test_query_yields_few_results():
     assert json_response["message"] == "OK"
 
 def test_query_yields_non_obvious_results():
-    response = client.get("/query?query=Many birds migrate long distances")
+    response = client.get("/query?query=Perfect drink pairings for a burger")
     json_response = response.json()
     
     # TODO: add assert to verify non obvious results
