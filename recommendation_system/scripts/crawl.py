@@ -1,6 +1,7 @@
-import csv
 import time
 from collections import deque
+from datetime import datetime
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -23,6 +24,11 @@ class Crawler:
         self.visited_urls = set()
         self.nxt_queue = deque([start_url])
         self.prev_queue = deque()
+        now = datetime.now().strftime("%m%d%Y_%H%M")
+        self.data_path = f"recommendation_system/data/{now}/crlmt_{self.crawl_limit}/"
+        self.model_path = f"recommendation_system/model/{now}/crlmt_{self.crawl_limit}/"
+        Path(self.data_path).mkdir(parents=True, exist_ok=True)
+        Path(self.model_path).mkdir(parents=True, exist_ok=True)
 
     def get_soup(self, url: str) -> BeautifulSoup:
         response = self.session.get(self.base_url + url, headers=self.headers)
@@ -60,7 +66,7 @@ class Crawler:
                 print(f"Error processing {current_url}: {e}")
 
             # Save data periodically
-            scraper.df.to_csv("recommendation_system/data/cocktail_data.csv", index=False)
+            scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
 
     def crawl(self, scraper: "CocktailScraper") -> None:
         try:
@@ -76,18 +82,17 @@ class Crawler:
                     self.nxt_queue, self.prev_queue = self.prev_queue, self.nxt_queue
 
             # Final save
-            scraper.df.to_csv("recommendation_system/data/cocktail_data.csv", index=False)
-            print("Data saved to recommendation_system/data/cocktail_data.csv")
-
+            scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
+            print("Data saved to cocktail_data.csv")
 
         except KeyboardInterrupt:
             print("Process interrupted. Saving data...")
-            scraper.df.to_csv("recommendation_system/data/cocktail_data.csv", index=False)
-            print("Data saved to recommendation_system/data/cocktail_data.csv")
+            scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
+            print("Data saved to cocktail_data.csv")
         except Exception as e:
             print(f"An error occurred: {e}")
-            scraper.df.to_csv("recommendation_system/data/cocktail_data.csv", index=False)
-            print("Data saved to recommendation_system/data/cocktail_data.csv")
+            scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
+            print("Data saved to cocktail_data.csv")
 
 
 if __name__ == "__main__":

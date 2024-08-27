@@ -17,6 +17,7 @@ class CocktailScraper:
                 "history",
                 "nutrition",
                 "alcohol_content",
+                "path"
             ]
         )
 
