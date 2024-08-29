@@ -4,3 +4,5 @@ pytest
 scikit-learn
 httpx
 pandas
+flake8
+black
