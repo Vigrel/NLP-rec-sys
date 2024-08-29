@@ -1,3 +1,4 @@
+import logging
 import time
 from collections import deque
 from datetime import datetime
@@ -6,6 +7,10 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 from cocktail_scraper import CocktailScraper
+from logs.logger import Logger
+
+Logger.setup_log(log_level=logging.INFO, local_dir="./logs")
+logger = logging.getLogger(__name__)
 
 
 class Crawler:
@@ -29,11 +34,19 @@ class Crawler:
         self.model_path = f"model/{now}/crlmt_{self.crawl_limit}"
         Path(self.data_path).mkdir(parents=True, exist_ok=True)
         Path(self.model_path).mkdir(parents=True, exist_ok=True)
+        logger.info(
+            f"Initialized Crawler with base_url={base_url}, start_url={start_url}, crawl_limit={crawl_limit}"
+        )
 
     def get_soup(self, url: str) -> BeautifulSoup:
-        response = self.session.get(self.base_url + url, headers=self.headers)
-        response.raise_for_status()
-        return BeautifulSoup(response.text, "html.parser")
+        try:
+            response = self.session.get(self.base_url + url, headers=self.headers)
+            response.raise_for_status()
+            logger.debug(f"Successfully fetched URL: {url}")
+            return BeautifulSoup(response.text, "html.parser")
+        except requests.RequestException as e:
+            logger.error(f"Request failed for URL {url}: {e}")
+            return None
 
     def process_queue(self, queue: deque, scraper: "CocktailScraper") -> None:
         while queue and len(scraper.df) < self.crawl_limit:
@@ -42,7 +55,7 @@ class Crawler:
                 continue
 
             self.visited_urls.add(current_url)
-            print(f"Visiting {current_url}")
+            logger.info(f"Visiting {current_url}")
 
             try:
                 soup = self.get_soup(current_url)
@@ -57,16 +70,19 @@ class Crawler:
                 if previous and previous not in self.visited_urls:
                     self.prev_queue.append(previous)
 
-                print(f"Processed {current_url}. Total records: {len(scraper.df)}")
-                time.sleep(3)  # Throttling to avoid overwhelming the server
+                logger.info(
+                    f"Processed {current_url}. Total records: {len(scraper.df)}"
+                )
+                time.sleep(3)
 
-            except requests.RequestException as e:
-                print(f"Request failed for {current_url}: {e}")
             except Exception as e:
-                print(f"Error processing {current_url}: {e}")
+                logger.error(f"Error processing {current_url}: {e}")
 
-            # Save data periodically
-            scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
+            try:
+                scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
+                logger.info(f"Data saved to {self.data_path}/cocktail_data.csv")
+            except Exception as e:
+                logger.error(f"Failed to save data: {e}")
 
     def crawl(self, scraper: "CocktailScraper") -> None:
         try:
@@ -81,18 +97,26 @@ class Crawler:
                 if not self.nxt_queue and self.prev_queue:
                     self.nxt_queue, self.prev_queue = self.prev_queue, self.nxt_queue
 
-            # Final save
-            scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
-            print("Data saved to cocktail_data.csv")
+            try:
+                scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
+                logger.info(f"Final data saved to {self.data_path}/cocktail_data.csv")
+            except Exception as e:
+                logger.error(f"Failed to save final data: {e}")
 
         except KeyboardInterrupt:
-            print("Process interrupted. Saving data...")
-            scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
-            print("Data saved to cocktail_data.csv")
+            logger.warning("Process interrupted. Saving data...")
+            try:
+                scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
+                logger.info(f"Data saved to {self.data_path}/cocktail_data.csv")
+            except Exception as e:
+                logger.error(f"Failed to save data after interruption: {e}")
         except Exception as e:
-            print(f"An error occurred: {e}")
-            scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
-            print("Data saved to cocktail_data.csv")
+            logger.error(f"An error occurred: {e}")
+            try:
+                scraper.df.to_csv(f"{self.data_path}/cocktail_data.csv", index=False)
+                logger.info(f"Data saved to {self.data_path}/cocktail_data.csv")
+            except Exception as save_error:
+                logger.error(f"Failed to save data after error: {save_error}")
 
 
 if __name__ == "__main__":

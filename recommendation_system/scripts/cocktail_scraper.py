@@ -1,8 +1,13 @@
+import logging
 import re
 from typing import Dict, Tuple
 
 import pandas as pd
 from bs4 import BeautifulSoup
+from logs.logger import Logger
+
+Logger.setup_log(log_level=logging.INFO, local_dir="./logs")
+logger = logging.getLogger(__name__)
 
 
 class CocktailScraper:
@@ -17,7 +22,7 @@ class CocktailScraper:
                 "history",
                 "nutrition",
                 "alcohol_content",
-                "path"
+                "path",
             ]
         )
 
@@ -49,20 +54,25 @@ class CocktailScraper:
             "a", class_="cell small-6 colour-inherit opacity-hover", href=True
         )
         if len(information_div) < 2:
+            logger.warning("Not enough links found for next cocktails")
             return "", ""
         return (information_div[0].get("href"), information_div[1].get("href"))
 
-    def scrape_cocktail_details(self, soup: BeautifulSoup, current_url:str) -> None:
-        information_div = soup.find(
-            "article",
-            class_="cell long-form long-form--small long-form--inline-paragraph pad-bottom",
-        ).text.strip()
-        cocktail_data = self.extract_cocktail_info(information_div)
+    def scrape_cocktail_details(self, soup: BeautifulSoup, current_url: str) -> None:
+        try:
+            information_div = soup.find(
+                "article",
+                class_="cell long-form long-form--small long-form--inline-paragraph pad-bottom",
+            ).text.strip()
+            cocktail_data = self.extract_cocktail_info(information_div)
 
-        cocktail_data["drink_title"] = current_url.split("/")[-1]
-        cocktail_data["path"] = current_url
+            cocktail_data["drink_title"] = current_url.split("/")[-1]
+            cocktail_data["path"] = current_url
 
-        self.df.loc[len(self.df)] = cocktail_data
+            self.df.loc[len(self.df)] = cocktail_data
+            logger.info(f"Scraped cocktail details from {current_url}")
+        except Exception as e:
+            logger.error(f"Error scraping details from {current_url}: {e}")
 
 
 if __name__ == "__main__":
