@@ -22,7 +22,8 @@ def test_query_yields_few_results():
 def test_query_yields_non_obvious_results():
     response = client.get("/query?query=Perfect drink pairings for a burger")
     json_response = response.json()
-    
+    """The non-obvious result is due to the fact
+    that the author of the drinks is called Jake Burger """
     # TODO: add assert to verify non obvious results
     assert response.status_code == 200
     assert len(json_response["results"]) > 0
