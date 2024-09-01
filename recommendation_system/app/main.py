@@ -47,7 +47,11 @@ def query_route(query: str = Query(..., description="Search query")):
     results = [
         {
             "title": rec["drink_title"],
-            "content": f"Garnish: {rec['garnish']}, How to: {rec['how_to'][:500]}...",
+            "Drink Glass": rec["drink_glass"],
+            "Garnish": rec["garnish"],
+            "Comment": rec["comment"],
+            "History": rec["history"],
+            "How To": rec["how_to_translated"],
             "relevance": round(relevance, 2),
         }
         for rec, relevance in zip(recommendations, relevance_scores)

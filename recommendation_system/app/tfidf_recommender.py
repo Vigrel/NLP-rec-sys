@@ -41,7 +41,21 @@ class TfidfRecommender:
         if not top_indices:
             return []
 
-        return self.df.iloc[top_indices].to_dict(orient="records")
+        return (
+            self.df[
+                [
+                    "drink_title",
+                    "drink_glass",
+                    "garnish",
+                    "comment",
+                    "history",
+                    "how_to_translated",
+                ]
+            ]
+            .iloc[top_indices]
+            .fillna("")
+            .to_dict(orient="records")
+        )
 
     def get_relevance_scores(self, query):
         query_vec = self._get_query_vector(query)
