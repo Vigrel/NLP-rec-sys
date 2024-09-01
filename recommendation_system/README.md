@@ -1,19 +1,25 @@
 # **Cocktail Recommender with TF-IDF**
 
 ## **Table of Contents**
-1. [Introduction](#introduction)
-2. [Project Structure](#project-structure)
-3. [Features](#features)
-4. [Installation](#installation)
-5. [Usage](#usage)
-6. [Configuration](#configuration)
-7. [Data](#data)
-8. [Testing](#testing)
-9. [Logging](#logging)
-10. [Dockerization](#dockerization)
-11. [Contributing](#contributing)
-12. [License](#license)
-13. [Contact Information](#contact-information)
+- [**Cocktail Recommender with TF-IDF**](#cocktail-recommender-with-tf-idf)
+  - [**Table of Contents**](#table-of-contents)
+  - [**Introduction**](#introduction)
+  - [**Project Structure**](#project-structure)
+  - [**Features**](#features)
+  - [**Installation**](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Steps](#steps)
+  - [**Usage**](#usage)
+    - [Prerequisites](#prerequisites-1)
+    - [Run/Use](#runuse)
+  - [**Configuration**](#configuration)
+  - [**Data**](#data)
+  - [**Testing**](#testing)
+  - [**Logging**](#logging)
+  - [**Dockerization**](#dockerization)
+  - [**Contributing**](#contributing)
+  - [**License**](#license)
+  - [**Contact Information**](#contact-information)
 
 ---
 
@@ -95,11 +101,10 @@ To query the API, you need a chosen vectorizer and the TF-IDF matrix. These will
    
 - **Use Data to Generate the Vectorizer and TF-IDF Matrix:**
    ```python
-   # Your files should be named cocktail_data.csv, vectorizer.pk, tfidf_matrix.pk
-   # TODO: change the need of a fixed name. Sorry :(
    tfidf = TfidfRecommender.from_files(
-       data_path="./data/example/",
-       model_path="./model/example/"
+      data_path="./data/example/cocktail_data_silver.csv", 
+      vectorizer_path="./model/example/vectorizer.pk", 
+      matrix_path="./model/example/tfidf_matrix.pk", 
    )
    ```
 

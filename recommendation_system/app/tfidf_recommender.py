@@ -15,11 +15,13 @@ class TfidfRecommender:
         self.threshold = threshold
 
     @classmethod
-    def from_files(cls, data_path: str, model_path: str, threshold=0.1):
-        df = pd.read_csv(f"{data_path}/cocktail_data.csv")
-        with open(f"{model_path}/vectorizer.pk", "rb") as file:
+    def from_files(
+        cls, data_path: str, vectorizer_path: str, matrix_path: str, threshold=0.1
+    ):
+        df = pd.read_csv(data_path)
+        with open(vectorizer_path, "rb") as file:
             vectorizer = pickle.load(file)
-        with open(f"{model_path}/tfidf_matrix.pk", "rb") as file:
+        with open(matrix_path, "rb") as file:
             tfidf_matrix = pickle.load(file)
         return cls(df, vectorizer, tfidf_matrix, threshold)
 

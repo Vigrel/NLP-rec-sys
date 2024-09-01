@@ -19,7 +19,10 @@ app = FastAPI()
 app.predictor = load_model()
 
 tfidf = TfidfRecommender.from_files(
-    data_path="./data/example", model_path="./model/example", threshold=0.15
+    data_path="./data/example/cocktail_data_silver.csv",
+    vectorizer_path="./model/example/vectorizer.pk",
+    matrix_path="./model/example/tfidf_matrix.pk",
+    threshold=0.15,
 )
 
 
