@@ -34,7 +34,7 @@ class TextProcessor:
             logger.error(f"Translation error: {e}")
             return text
 
-    def translate_batch(self, df, batch_size=3, sleep_time=1):
+    def translate_batch(self, df, batch_size=10, sleep_time=3):
         translated_texts = []
         for start in range(0, len(df), batch_size):
             batch = df.iloc[start : start + batch_size]
@@ -99,7 +99,7 @@ class ModelTrainer:
 def main(base_url, start_url):
     logger.info("Starting scraping")
     scraper = CocktailScraper()
-    crawler = Crawler(base_url, start_url, crawl_limit=3)
+    crawler = Crawler(base_url, start_url, crawl_limit=10000)
 
     try:
         crawler.crawl(scraper)
@@ -121,4 +121,7 @@ def main(base_url, start_url):
 
 
 if __name__ == "__main__":
-    main()
+    main(
+        "https://www.diffordsguide.com",
+        "/pt-br/cocktails/recipe/2167/frank-sullivan-cocktail",
+    )
