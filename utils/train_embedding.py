@@ -2,31 +2,30 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from autoencoder import Autoencoder
-from glove import Glove
-from tokenizer import MyTokenizer
+from utils.autoencoder import Autoencoder
+from utils.glove import Glove
+from utils.tokenizer import MyTokenizer
 
 
 def train_autoencoder(model, data, criterion, optimizer, epochs=20, batch_size=256):
     model.train()  
     for epoch in range(epochs):
         total_loss = 0
-        # for i in range(0, len(data), batch_size):
-        batch = data
-            # batch = data[i:i+batch_size]
-        batch = torch.FloatTensor(batch) 
+        for i in range(0, len(data), batch_size):
+            batch = data[i:i+batch_size]
+            batch = torch.FloatTensor(batch) 
 
-        outputs = model(batch)
+            outputs = model(batch)
 
-        loss = criterion(outputs, batch)
-        
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+            loss = criterion(outputs, batch)
+            
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-        total_loss += loss.item()
+            total_loss += loss.item()
 
-        print(f"Epoch [{epoch+1}/{epochs}], Loss: {total_loss/len(data):.4f}")
+    return model
 
 def create_embedding_matrix(vocab, glove_vectors, embedding_dim=300):
     vocab_size = len(vocab)
@@ -84,9 +83,10 @@ if __name__ == "__main__":
         sentence_embeddings.append(pooled_embedding)
 
     data_sentence_embeddings = sentence_embeddings.copy()
-    train_autoencoder(autoencoder, data_sentence_embeddings, criterion, optimizer)
+    model = train_autoencoder(autoencoder, data_sentence_embeddings, criterion, optimizer)
 
-    enhanced_embeddings = get_enhanced_embeddings(autoencoder, data_sentence_embeddings)
-    
-    with open('model/glove_trained_embeddings.npy', 'wb') as f:
-        np.save(f, np.array([1, 2]))
+    enhanced_embeddings = get_enhanced_embeddings(model, data_sentence_embeddings)
+
+    torch.save(model.state_dict(), "model/example/autoencoder_model.pth")
+    with open('model/example/glove_trained_embeddings.npy', 'wb') as f:
+        np.save(f, np.array(enhanced_embeddings))
