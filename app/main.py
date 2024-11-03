@@ -1,7 +1,7 @@
 import os
 
 import uvicorn
-from app.tfidf_recommender import TfidfRecommender
+from app.glove_recommender import GloVeRecommender
 from fastapi import FastAPI, HTTPException, Query
 
 
@@ -18,10 +18,10 @@ def load_model():
 app = FastAPI()
 app.predictor = load_model()
 
-tfidf = TfidfRecommender.from_files(
-    data_path="./data/example/cocktail_data_silver.csv",
-    vectorizer_path="./model/example/vectorizer.pk",
-    matrix_path="./model/example/tfidf_matrix.pk",
+glove = GloVeRecommender.from_files(
+    data_path="data/example/cocktail_data_gold.csv",
+    model_path="model/example/autoencoder_model.pth",
+    embedding_path="model/example/glove_trained_embeddings.npy",
     threshold=0.15,
 )
 
@@ -41,9 +41,10 @@ def query_route(query: str = Query(..., description="Search query")):
     if not query.strip():
         raise HTTPException(status_code=400, detail="No query provided")
 
-    recommendations = tfidf.recommend(query)
-    relevance_scores = tfidf.get_relevance_scores(query)
-
+    recommendations = glove.recommend(query)
+    relevance_scores = list(glove.get_relevance_scores(query))  
+    print(relevance_scores)
+    relevance_scores = [int(i) for i in relevance_scores]
     results = [
         {
             "title": rec["drink_title"],
