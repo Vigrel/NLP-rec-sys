@@ -27,7 +27,7 @@ Analyzing the words from the plot, it's possible to validate a human emotion exp
 
 ### Step 3: test the search system
 
-Results for different queries
+The results across different tests—whether for a racing game, a puzzle game, or a horror-educational game—consistently retrieve the same reviews. This likely occurs because the autoencoder has learned a generalized representation that captures broad, high-level patterns rather than game-specific details. Additionally, the tokenizer processes phrases up to 1000 words, while the queries contain only a few words. This mismatch may dilute the impact of specific query terms, causing the model to rely more on general similarities across reviews than on the unique characteristics of each query.
 
 "A racing game with mercedes cars"
 ```
