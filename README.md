@@ -4,7 +4,7 @@
 
 ### Usage
 
-To train the embeddings, first install the necessary Python packages by running pip install -r requirements.txt. Then, execute `utils/train_embeddings.py` to train and save both the embeddings and the autoencoder model in the `model/example` directory. Once training is complete, you can use `tsne.ipynb` to visualize the clusters in the embedding space. Additionally, `app/glove_recommender.py` allows you to query the dataset and explore related items within the trained embeddings.
+To train the embeddings, first install the necessary Python packages by running `pip install -r requirements.txt`. Then, execute `utils/train_embeddings.py` to train and save both the embeddings and the autoencoder model in the `model/example` directory. Once training is complete, you can use `tsne.ipynb` to visualize the clusters in the embedding space. Additionally, `app/glove_recommender.py` allows you to query the dataset and explore related items within the trained embeddings.
 
 ### Step 1: Embeddings
 
